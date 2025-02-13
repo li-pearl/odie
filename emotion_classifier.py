@@ -1,10 +1,14 @@
 import cv2
-import torch
 import numpy as np
-from fer import FER
+from feat import Detector
 
-# Initialize Face Detector & Emotion Recognizer
-detector = FER()
+# Initialize Py-Feat Detector
+detector = Detector(
+    face_model="retinaface", 
+    landmark_model="mobilenet", 
+    au_model="xgb", 
+    emotion_model="resmasknet"
+)
 
 # Open webcam
 cap = cv2.VideoCapture(0)
@@ -14,21 +18,37 @@ while cap.isOpened():
     if not ret:
         break
 
-    # Detect emotion using FER
-    results = detector.detect_emotions(frame)
+    try:
+        # Detect faces
+        face_results = detector.detect_faces(frame)
 
-    for result in results:
-        (x, y, w, h) = result["box"]
-        emotion, score = max(result["emotions"].items(), key=lambda item: item[1])
+        if face_results and len(face_results) > 0:
+            for face in face_results:
+                bbox = face["bbox"]  # Correct way to extract bounding box
+                landmarks = face["landmarks"]  # Correct way to extract landmarks
 
-        # Draw face box
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                # Ensure bbox is correctly formatted as (x, y, w, h)
+                x, y, w, h = map(int, bbox)
 
-        # Display emotion classification
-        cv2.putText(frame, f"{emotion} ({score:.2f})", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.8, (0, 255, 0), 2, cv2.LINE_AA)
+                # Get emotion predictions
+                emotion_scores = detector.detect_emotions(frame, facebox=bbox, landmarks=landmarks)
+                
+                if not emotion_scores.empty:
+                    dominant_emotion = emotion_scores.idxmax(axis=1).values[0]  # Get most probable emotion
+                else:
+                    dominant_emotion = "Unknown"
 
-    cv2.imshow("Emotion Classification", frame)
+                # Draw face bounding box
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                # Display dominant emotion
+                cv2.putText(frame, f"Emotion: {dominant_emotion}", (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    cv2.imshow("Py-Feat Emotion Classification", frame)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):  # Press 'q' to quit
         break

@@ -7,7 +7,7 @@ import io
 
 # Audio settings
 FORMAT = pyaudio.paInt16
-CHANNELS = 1
+CHANNELS = 1                                                                                                                        
 RATE = 44100  # Sample rate
 CHUNK = 1024  # Buffer size
 OUTPUT_FILENAME = "recorded_audio.wav"
@@ -18,7 +18,7 @@ def record_speech(button="space"):
     print(f"Press and hold '{button}' to record speech...")
 
     # Wait until the button is pressed
-    while not keyboard.is_pressed(button):
+    while not keyboard.is_pressed(button):                                                                     
         time.sleep(0.01)  # Prevent CPU overuse
 
     print("Recording... Speak now.")
