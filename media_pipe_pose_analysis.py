@@ -9,7 +9,6 @@ pose = mpPose.Pose()
 
 pose_label = ""
 
-# Open webcam
 cap = cv2.VideoCapture(0)
 pTime = 0
 
@@ -39,7 +38,7 @@ def classify_pose(landmarks, img_shape):
     wrist_distance = abs(lw_x - rw_x)
 
     # Check if body is leaning
-    lean_threshold = 20  # How much tilt is considered leaning
+    lean_threshold = 20 
     body_tilt = abs(ls_y - rs_y)
     is_leaning = body_tilt > lean_threshold
 

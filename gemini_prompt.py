@@ -32,7 +32,7 @@ def generate_visual_context_summary(speech_text, pose_label, emotion_label, gest
     return response.text  # Get the AI-generated response
 
 # Example data (Replace with real values)
-speech_text = "I love science fair!"
+speech_text = "hi!"
 pose_label = "Open stance"
 emotion_label = "Happy"
 gesture_label = "Both Hand Raised"
