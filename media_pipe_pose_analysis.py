@@ -71,7 +71,6 @@ while cap.isOpened():
         landmarks = results.pose_landmarks.landmark
         pose_label = classify_pose(landmarks, img.shape)
 
-        # for text display
         cv2.putText(img, pose_label, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
 
     # fps calculation

@@ -10,7 +10,6 @@ detector = Detector(
     emotion_model="resmasknet"
 )
 
-# Open webcam
 cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
@@ -19,18 +18,16 @@ while cap.isOpened():
         break
 
     try:
-        # Detect faces
         face_results = detector.detect_faces(frame)
 
         if face_results and len(face_results) > 0:
             for face in face_results:
-                bbox = face["bbox"]  # Correct way to extract bounding box
-                landmarks = face["landmarks"]  # Correct way to extract landmarks
+                bbox = face["bbox"]  
+                landmarks = face["landmarks"] 
 
                 # Ensure bbox is correctly formatted as (x, y, w, h)
                 x, y, w, h = map(int, bbox)
 
-                # Get emotion predictions
                 emotion_scores = detector.detect_emotions(frame, facebox=bbox, landmarks=landmarks)
                 
                 if not emotion_scores.empty:
@@ -38,10 +35,8 @@ while cap.isOpened():
                 else:
                     dominant_emotion = "Unknown"
 
-                # Draw face bounding box
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-                # Display dominant emotion
+  
                 cv2.putText(frame, f"Emotion: {dominant_emotion}", (x, y - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
 
